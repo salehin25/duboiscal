@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	
+	<script>
+		$( document ).ready(function() {
+			(function($) {
+		  $.fn.inputFilter = function(inputFilter) {
+			return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
+			  if (inputFilter(this.value)) {
+				this.oldValue = this.value;
+				this.oldSelectionStart = this.selectionStart;
+				this.oldSelectionEnd = this.selectionEnd;
+			  } else if (this.hasOwnProperty("oldValue")) {
+				this.value = this.oldValue;
+				this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+			  } else {
+				this.value = "";
+			  }
+			});
+		  };
+		}(jQuery));
+
+
+		// Install input filters.
+		$("#svc").inputFilter(function(value) {
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#ivc").inputFilter(function(value) {
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#hemoglobin").inputFilter(function(value) {
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		
+		$("#saturation").inputFilter(function(value) {
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#po2").inputFilter(function(value) {
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#height").inputFilter(function(value) {
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#weight").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#pa").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#pv").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#ao").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#la").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#rpa").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		  
+		$("#lpa").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });  
+		
+		$("#dta").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#radiousrpa").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#radiouslpa").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#meangradient").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#dfp").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#pa2").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#la2").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		$("#ao2").inputFilter(function(value) { 
+		  return /^-?\d*[.,]?\d*$/.test(value); });
+		
+		});
+	
+		
+	
+	</script>
+	
+	<script>
+		function calculate(){
+			var svc=$("#svc").val();
+			
+			svc=svc/100;
+			var ivc=$("#ivc").val();
+			ivc=ivc/100;
+			var mv=((3/4)*svc) + ((1/4)*ivc);
+			mv=roundToTwo(mv);
+			console.log("MV : "+mv)
+			$("#mvout").text(mv);
+			
+			var hemoglobin=$("#hemoglobin").val();
+			var saturation=$("#saturation").val();
+			saturation=saturation/100;
+			var content=(1.36*hemoglobin*10*saturation);
+			content=roundToTwo(content);
+			console.log("O2 Content : "+content);
+			$("#contentout").text(content);
+			
+			//debugger;
+			var p02=$("#po2").val();
+			var content2=content+(0.03*p02);
+			content2=roundToTwo(content2);
+			console.log("O2 Content 2 : "+content2);
+			$("#content2out").text(content2);
+
+			
+			var height=$("#height").val();
+			var weight=$("#weight").val();
+			var pa=$("#pa").val();
+			pa=pa/100;
+			var pv=$("#pv").val();
+			pv=pv/100;
+			var bsa=((weight*height)/3600);
+			bsa=Math.sqrt(bsa);
+			bsa=roundToTwo(bsa);
+			console.log("bsa : "+bsa);
+			$("#bsameasure").text(isNaN(bsa)?0:bsa);
+			
+			
+			var xbar=(125*bsa)/(1.36*hemoglobin*10);
+			var qp=(xbar*(1/(pv-pa)));
+			qp=roundToTwo(qp);
+			xbar=roundToTwo(xbar);
+			console.log("QP : "+qp);
+			$("#qpmeasure").text(isNaN(qp)?0:qp);
+			$("#xbarmeasure").text(isNaN(xbar)?0:xbar);
+
+			//debugger;
+			
+			var ao=$("#ao").val();
+			ao=ao/100;
+			var qs=(xbar*(1/(ao-mv)));
+			qs=roundToTwo(qs);
+			console.log("QS : "+qs);
+			$("#qsmeasure").text(isNaN(qs)?0:qs);
+			
+			var qeff=(xbar*(1/(pv-mv)));
+			qeff=roundToTwo(qeff);
+			console.log("Q Effective : "+qeff);
+			$("#qeffmeasure").text(isNaN(qeff)?0:qeff);
+			
+			//var pv2=$("#pv2").val();
+			var pa2=$("#pa2").val();
+			var ao2=$("#ao2").val();
+			var la2=$("#la2").val();
+			var ra2=$("#ra2").val();
+			var pvr=((pa2-la2)/qp);
+			
+			pvr=roundToTwo(pvr);
+			console.log(" PVR : "+pvr);
+			$("#pvrmeasure").text(isNaN(pvr)?0:pvr);
+			
+			var svr=((ao2-ra2)/qp);
+			svr=roundToTwo(svr);
+			console.log(" SVR : "+svr);
+			$("#svrmeasure").text(isNaN(svr)?0:svr);
+			
+			var pvrbysvr=(pvr/svr);
+			pvrbysvr=roundToTwo(pvrbysvr);
+			console.log(" pvrbysvr : "+pvrbysvr);
+			$("#pvrbysvrmeasure").text(isNaN(pvrbysvr)?0:pvrbysvr);
+			
+			
+			
+			var pvri=(pvr*bsa);
+			pvri=roundToTwo(pvri);
+			console.log(" PVRi : "+pvri);
+			$("#pvrimeasure").text(isNaN(pvri)?0:pvri);
+			
+			
+			var svri=(svr*bsa);
+			svri=roundToTwo(svri);
+			console.log(" SVRi : "+svri);
+			$("#svrimeasure").text(isNaN(svri)?0:svri);
+			
+			
+			var rpa=$("#rpa").val();
+			rpa=rpa/100;
+			var lpa=$("#lpa").val();
+			lpa=lpa/100;
+			var dta=$("#dta").val();
+			
+			var mg=((rpa+lpa)/dta);
+			mg=roundToTwo(mg);
+			console.log("mg : "+mg);
+			$("#mgmeasure").text(isNaN(mg)?0:mg);
+			
+			var rrpa=$("#radiousrpa").val();
+			var rlpa=$("#radiouslpa").val();
+			
+			var ni=(((3.14*rrpa*rrpa)+(3.14*rlpa*rlpa))/bsa);
+			ni=roundToTwo(ni);
+			console.log("ni : "+ni);
+			$("#nimeasure").text(isNaN(ni)?0:ni);
+			
+			var co=((125*bsa)/(1.36*10*hemoglobin*(ao-pa)));
+			var coindex=co/bsa;
+			co=roundToTwo(co);
+			coindex=roundToTwo(coindex);
+			console.log("co : "+co);
+			console.log("co index : "+coindex);
+			$("#comeasure").text(isNaN(co)?0:co);
+			$("#comeasureindex").text(isNaN(coindex)?0:coindex);
+			
+			
+			var mean=$("#meangradient").val();
+			var dfp=$("#dfp").val();
+			mean=Math.sqrt(mean);
+			mean=roundToTwo(mean);
+			var mva=(((co*1000)/(dfp))/(38*mean));
+			mva=roundToTwo(mva);
+			$("#mvameasureindex").text(isNaN(mva)?0:mva);
+			
+			
+			var qsbdg=((xbar*(pv-ivc))/((pv-pa)*(ao-ivc)));
+			qsbdg=roundToTwo(qsbdg);
+			$("#qsbdgmeasureindex").text(isNaN(qsbdg)?0:qsbdg);
+
+			$('#datamodal').modal('toggle');
+			
+			
+		}
+		
+		function roundToTwo(num) {    
+			return +(Math.round(num + "e+2")  + "e-2");
+		}
+		
+		function reset(){
+			 $('#dataform')[0].reset();
+		
+		}
+		
+	</script>
+	
+
+
+    <title>Dubois Method</title>
+  </head>
+  <body>
+    <h3 class="bd-title">Dubois Method</h3>
+    <div class="container-fluid">
+		<form class="g-3" id="dataform">
+			<div class="row">
+				<div class="col-md-2">
+					<label for="svc" class="form-label">SVC</label>
+					<input type="text" class="form-control" id="svc" name="svc" placeholder="00">
+				</div>
+				<div class="col-md-2">
+					<label for="ivc" class="form-label">IVC</label>
+					<input type="text" class="form-control" id="ivc" placeholder="00">
+				</div>
+				<div class="col-md-2">
+					<label for="saturation" class="form-label">0<sub>2</sub> Saturation</label>
+					<input type="text" class="form-control" id="saturation" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="hemoglobin" class="form-label">Hemoglobin (H<sub>b</sub>)</label>
+					<input type="text" class="form-control" id="hemoglobin" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="po2" class="form-label">PO<sub>2</sub> (ABG)</label>
+					<input type="text" class="form-control" id="po2" value="0">
+				</div>
+				<div class="col-md-2">
+					<label for="height" class="form-label">Height (in cm)</label>
+					<input type="text" class="form-control" id="height" placeholder="00">
+				</div>
+			</div>
+			<div class="row">
+				
+				<div class="col-md-2">
+					<label for="weight" class="form-label">Weight (in Kg)</label>
+					<input type="text" class="form-control" id="weight" placeholder="00">
+				</div>
+				<div class="col-md-2">
+					<label for="pa" class="form-label">PA (Saturation)</label>
+					<input type="text" class="form-control" id="pa" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="pv" class="form-label">PV (Saturation)</label>
+					<input type="text" class="form-control" id="pv" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="ao" class="form-label">Ao (Saturation)</label>
+					<input type="text" class="form-control" id="ao" placeholder="0.00">
+				</div>
+				
+				<div class="col-md-2">
+					<label for="rpa" class="form-label">RPA</label>
+					<input type="text" class="form-control" id="rpa" placeholder="RPA Value">
+				</div>
+				<div class="col-md-2">
+					<label for="lpa" class="form-label">LPA</label>
+					<input type="text" class="form-control" id="lpa" placeholder="00">
+				</div>
+				
+			</div>
+			<div class="row">
+				
+				
+				<div class="col-md-2">
+					<label for="dta" class="form-label">DTA</label>
+					<input type="text" class="form-control" id="dta" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="radiousrpa" class="form-label">r (RPA)</label>
+					<input type="text" class="form-control" id="radiousrpa" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="radiouslpa" class="form-label">r (LPA)</label>
+					<input type="text" class="form-control" id="radiouslpa" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="meangradient" class="form-label">Mean Gradient</label>
+					<input type="text" class="form-control" id="meangradient" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="heartrate" class="form-label">Dfp</label>
+					<input type="text" class="form-control" id="dfp" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="pa" class="form-label">PA (Pressure)</label>
+					<input type="text" class="form-control" id="pa2" placeholder="0.00">
+				</div>
+				
+				<div class="col-md-2">
+					<label for="ao" class="form-label">Ao (Pressure)</label>
+					<input type="text" class="form-control" id="ao2" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="la" class="form-label">LA/PCWP (Pressure)</label>
+					<input type="text" class="form-control" id="la2" placeholder="0.00">
+				</div>
+				<div class="col-md-2">
+					<label for="ao" class="form-label">RA (Pressure)</label>
+					<input type="text" class="form-control" id="ra2" placeholder="0.00">
+				</div>
+			</div>
+			<div class="row" style="margin-top: 20px;">
+				<div class="d-grid gap-2 col-6 mx-auto">
+				  <button class="btn btn-primary" type="button" onclick="calculate();">Calculate</button>
+				  <button class="btn btn-warning" type="button" onclick="reset();">Reset</button>
+				</div>
+			</div>
+		</form>
+		
+		
+		<!-- Button trigger modal -->
+		<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+		  Launch demo modal
+		</button> -->
+
+		<!-- Modal -->
+		<div class="modal fade" id="datamodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Results</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+			  <div class="modal-body">
+				<table class="table table-hover">
+				  <tr> 
+					<th>MV</th>
+					<td><span id="mvout"></span></td>
+				  </tr>
+				  <tr> 
+					<th>O<sub>2</sub> Content (RA)</th>
+					<td><span id="contentout"></td>
+				  </tr>
+				  <tr> 
+					<th>O<sub>2</sub> Part O<sub>2</sub></th>
+					<td><span id="content2out"></td>
+				  </tr>
+				  <tr> 
+					<th>BSA</th>
+					<td><span id="bsameasure"></td>
+				  </tr>
+				  <tr> 
+					<th>X-bar</th>
+					<td><span id="xbarmeasure"></td>
+				  </tr>
+				  <tr>
+				  <tr> 
+					<th>Q<sub>p</sub></th>
+					<td><span id="qpmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>Q<sub>s</sub></th>
+					<td><span id="qsmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>Q<sub>s</sub> (Bdg) </th>
+					<td><span id="qsbdgmeasureindex"></td>
+				  </tr>
+				  <tr> 
+					<th>Q<sub>eff</sub></th>
+					<td><span id="qeffmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>PVR</th>
+					<td><span id="pvrmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>SVR</th>
+					<td><span id="svrmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>PVR/SVR</th>
+					<td><span id="pvrbysvrmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>PVRi</th>
+					<td><span id="pvrimeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>SVRi</th>
+					<td><span id="svrimeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>Mc Goon</th>
+					<td><span id="mgmeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>Nakata index</th>
+					<td><span id="nimeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>CO</th>
+					<td><span id="comeasure"></td>
+				  </tr>
+				  <tr> 
+					<th>CO Index</th>
+					<td><span id="comeasureindex"></td>
+				  </tr>
+				  <tr> 
+					<th>MVA</th>
+					<td><span id="mvameasureindex"></td>
+				  </tr>
+				  
+				  
+				</table>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+		
+		
+    </div>
+    
+  </body>
+</html>
